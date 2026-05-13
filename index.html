@@ -630,41 +630,59 @@ footer {
   display: block;
   animation: vinyl-spin 2.6s linear infinite;
 }
-.record-wrap.is-paused .record-disc {
-  animation-play-state: paused;
+@keyframes needle-drop-flash {
+  0%   { filter: drop-shadow(-12px 0 32px rgba(0,0,0,.7)); }
+  35%  { filter: drop-shadow(-12px 0 32px rgba(0,0,0,.7)) drop-shadow(0 0 32px rgba(227,50,42,.85)); }
+  100% { filter: drop-shadow(-12px 0 32px rgba(0,0,0,.7)); }
 }
-.record-wrap::after {
-  content: '';
+.record-wrap.is-clicking {
+  animation: needle-drop-flash .75s ease-out forwards;
+}
+
+/* Tonearm */
+.tonearm {
   position: absolute;
-  inset: 0;
-  border-radius: 50%;
+  top: 4%;
+  right: -6%;
+  width: 18px;
+  height: 42%;
+  transform-origin: 50% 9px;
+  transform: rotate(-32deg);
+  transition: transform .55s cubic-bezier(.22,1,.36,1);
+  z-index: 10;
   pointer-events: none;
-  transition: background .35s, opacity .35s;
-  opacity: 0;
 }
-.record-wrap.is-paused::after {
-  background: rgba(0,0,0,.32);
-  opacity: 1;
+.cover-scene.needle-dropped .tonearm {
+  transform: rotate(-5deg);
 }
-.record-needle {
+.tonearm__pivot {
   position: absolute;
-  inset: 0;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 14px; height: 14px;
+  background: var(--cream);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .3s;
+  border: 2px solid rgba(20,20,20,.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,.5);
 }
-.record-wrap.is-paused .record-needle {
-  opacity: 1;
+.tonearm__shaft {
+  position: absolute;
+  top: 9px; left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: calc(100% - 9px);
+  background: linear-gradient(180deg, var(--cream) 0%, rgba(240,230,210,.65) 100%);
+  border-radius: 2px;
+  box-shadow: 1px 1px 4px rgba(0,0,0,.35);
 }
-.record-needle svg {
-  width: 36%;
-  height: 36%;
-  fill: var(--cream);
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.5));
+.tonearm__head {
+  position: absolute;
+  bottom: -4px; left: 50%;
+  transform: translateX(-50%) rotate(16deg);
+  width: 6px; height: 10px;
+  background: var(--red-hot);
+  border-radius: 1px 1px 3px 3px;
+  box-shadow: 0 0 10px rgba(227,50,42,.7);
 }
 @keyframes vinyl-spin {
   to { transform: rotate(360deg); }
@@ -705,14 +723,15 @@ footer {
     </div>
   </div>
 
-  <div class="cover-scene">
-    <div class="record-wrap" id="recordWrap" title="クリックで一時停止">
+  <div class="cover-scene" id="coverScene">
+    <div class="record-wrap" id="recordWrap" title="クリックでWORKSへ">
       <img class="record-disc" src="./record.png" alt="" aria-hidden="true" />
-      <div class="record-needle">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 5v14l11-7z"/>
-        </svg>
-      </div>
+    </div>
+
+    <div class="tonearm" id="tonearm" aria-hidden="true">
+      <div class="tonearm__pivot"></div>
+      <div class="tonearm__shaft"></div>
+      <div class="tonearm__head"></div>
     </div>
 
     <div class="cover grain">
@@ -1088,11 +1107,27 @@ footer {
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // Record: click to pause / resume
+  // Record click: needle drop → scroll to #works
   const recordWrap = document.getElementById('recordWrap');
-  if (recordWrap) {
+  const coverScene = document.getElementById('coverScene');
+  if (recordWrap && coverScene) {
+    let locked = false;
     recordWrap.addEventListener('click', () => {
-      recordWrap.classList.toggle('is-paused');
+      if (locked) return;
+      locked = true;
+
+      coverScene.classList.add('needle-dropped');
+      recordWrap.classList.add('is-clicking');
+
+      setTimeout(() => {
+        document.getElementById('works').scrollIntoView({ behavior: 'smooth' });
+      }, 500);
+
+      setTimeout(() => {
+        coverScene.classList.remove('needle-dropped');
+        recordWrap.classList.remove('is-clicking');
+        locked = false;
+      }, 2000);
     });
   }
 </script>
