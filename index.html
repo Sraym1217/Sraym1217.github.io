@@ -595,6 +595,84 @@ footer {
   opacity: 1;
   transform: none;
 }
+
+/* ─── Vinyl Record ──────────────────────────── */
+.cover-scene {
+  position: relative;
+  width: min(540px, 92vw);
+}
+.cover-scene .cover {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+.record-wrap {
+  position: absolute;
+  width: 83%;
+  aspect-ratio: 1 / 1;
+  right: -27%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  border-radius: 50%;
+  transition: right .75s var(--ease);
+  cursor: pointer;
+  filter: drop-shadow(-12px 0 32px rgba(0,0,0,.7));
+}
+.cover-scene:hover .record-wrap {
+  right: -41%;
+}
+.record-disc {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  animation: vinyl-spin 2.6s linear infinite;
+}
+.record-wrap.is-paused .record-disc {
+  animation-play-state: paused;
+}
+.record-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: background .35s, opacity .35s;
+  opacity: 0;
+}
+.record-wrap.is-paused::after {
+  background: rgba(0,0,0,.32);
+  opacity: 1;
+}
+.record-needle {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.record-wrap.is-paused .record-needle {
+  opacity: 1;
+}
+.record-needle svg {
+  width: 36%;
+  height: 36%;
+  fill: var(--cream);
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.5));
+}
+@keyframes vinyl-spin {
+  to { transform: rotate(360deg); }
+}
+@media (max-width: 600px) {
+  .record-wrap { right: -13%; width: 76%; }
+  .cover-scene:hover .record-wrap { right: -22%; }
+}
 </style>
 </head>
 <body>
@@ -627,20 +705,31 @@ footer {
     </div>
   </div>
 
-  <div class="cover grain">
-    <div class="cover__meta">
-      <span>SIDE A · NLP</span>
-      <span><span class="blink"></span>2026</span>
+  <div class="cover-scene">
+    <div class="record-wrap" id="recordWrap" title="クリックで一時停止">
+      <img class="record-disc" src="./record.png" alt="" aria-hidden="true" />
+      <div class="record-needle">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </div>
     </div>
 
-    <img class="cover__img" src="./cover.jpg" alt="" aria-hidden="true" />
+    <div class="cover grain">
+      <div class="cover__meta">
+        <span>SIDE A · NLP</span>
+        <span><span class="blink"></span>2026</span>
+      </div>
 
-    <div class="cover__big" aria-hidden="true">
-      <span>N</span><span>L</span><span>P</span>
-    </div>
+      <img class="cover__img" src="./cover.jpg" alt="" aria-hidden="true" />
 
-    <div class="cover__credit">
-      <div class="cover__name">HAYATO OGAWA</div>
+      <div class="cover__big" aria-hidden="true">
+        <span>N</span><span>L</span><span>P</span>
+      </div>
+
+      <div class="cover__credit">
+        <div class="cover__name">HAYATO OGAWA</div>
+      </div>
     </div>
   </div>
 
@@ -998,6 +1087,14 @@ footer {
     });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Record: click to pause / resume
+  const recordWrap = document.getElementById('recordWrap');
+  if (recordWrap) {
+    recordWrap.addEventListener('click', () => {
+      recordWrap.classList.toggle('is-paused');
+    });
+  }
 </script>
 
 </body>
