@@ -691,6 +691,22 @@ footer {
   .record-wrap { right: -13%; width: 76%; }
   .cover-scene:hover .record-wrap { right: -22%; }
 }
+
+/* ─── Bar → Track highlight ──────────────── */
+.bar[data-target] { cursor: pointer; }
+
+@keyframes track-flash {
+  0%   { background: rgba(227,50,42,.28); box-shadow: inset 4px 0 0 var(--red-hot); }
+  65%  { background: rgba(227,50,42,.12); box-shadow: inset 4px 0 0 var(--red-hot); }
+  100% { background: rgba(20,20,20,.04);  box-shadow: none; }
+}
+.track.is-highlighted {
+  animation: track-flash 2.2s var(--ease) forwards;
+}
+.track.is-highlighted .track__num {
+  color: var(--red-hot);
+  opacity: 1;
+}
 </style>
 </head>
 <body>
@@ -808,7 +824,7 @@ footer {
       <div class="tracklist__section reveal">
         <div class="tracklist__group reveal">International Conferences</div>
 
-      <div class="track reveal">
+      <div class="track reveal" id="track-rap">
         <div class="track__num">01</div>
         <div>
           <div class="track__title">
@@ -945,7 +961,7 @@ footer {
         <div class="track__venue">YANS <span class="year">2025.09</span></div>
       </div>
 
-      <a class="track reveal" href="https://www.sbintuitions.co.jp/blog/entry/2025/08/20/160139" target="_blank" rel="noopener">
+      <a class="track reveal" id="track-embedding" href="https://www.sbintuitions.co.jp/blog/entry/2025/08/20/160139" target="_blank" rel="noopener">
         <div class="track__num">15</div>
         <div>
           <div class="track__title">Sarashina-Embedding-v2-1B: 日本語に特化した指示を付与できるテキスト埋め込みモデル</div>
@@ -1065,15 +1081,15 @@ footer {
   <div class="wrap">
     <div class="section-head reveal">
       <h2><span class="num">05</span>BARS</h2>
-      <span class="jp">— 得意分野 / SKILLS</span>
+      <span class="jp">— SKILLS</span>
     </div>
 
     <div class="bars reveal">
       <span class="bar">NLP</span>
       <span class="bar">LLM</span>
-      <span class="bar is-hot">Japanese RAP</span>
+      <span class="bar is-hot" data-target="track-rap">Japanese RAP</span>
       <span class="bar">Rhyme</span>
-      <span class="bar is-hot">Text Embedding Models</span>
+      <span class="bar is-hot" data-target="track-embedding">Text Embedding Models</span>
     </div>
   </div>
 </section>
@@ -1106,6 +1122,19 @@ footer {
     });
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Bar → highlight target track
+  document.querySelectorAll('.bar[data-target]').forEach(bar => {
+    bar.addEventListener('click', () => {
+      const target = document.getElementById(bar.dataset.target);
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      target.classList.remove('is-highlighted');
+      void target.offsetWidth;
+      target.classList.add('is-highlighted');
+      setTimeout(() => target.classList.remove('is-highlighted'), 2300);
+    });
+  });
 
   // Record click: needle drop → scroll to #works
   const recordWrap = document.getElementById('recordWrap');
