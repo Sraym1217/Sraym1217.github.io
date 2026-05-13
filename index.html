@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HAYATO — NLP Research Portfolio</title>
+<meta name="description" content="Hayato — NLP Research Portfolio." />
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f0e6d2' rx='6'/%3E%3Ctext x='50%25' y='66%25' text-anchor='middle' font-family='Arial Black,sans-serif' font-size='22' fill='%23b8302a' font-weight='900'%3EH%3C/text%3E%3C/svg%3E" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=Bebas+Neue&family=RocknRoll+One&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --red:        #b8302a;   
+  --red-deep:   #8a1f1a;   
+  --red-hot:    #e3322a;   
+  --cream:      #f0e6d2;   
+  --cream-2:    #e7dcc4;   
+  --ink:        #141414;   
+  --muted:      rgba(20,20,20,.6);
+
+  --ease:       cubic-bezier(.22,1,.36,1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--red);
+  color: var(--cream);
+  font-family: 'Zen Kaku Gothic New', 'Space Mono', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--ink); color: var(--cream); }
+
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; max-width: 100%; }
+
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+.grain::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.5'/></svg>");
+  opacity: .08;
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+.nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 22px 28px;
+  position: sticky; top: 0; z-index: 50;
+  background: var(--red);
+  border-bottom: 1px solid rgba(240,230,210,.18);
+  backdrop-filter: blur(4px);
+}
+.nav__brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Archivo Black', sans-serif;
+  letter-spacing: .04em;
+  font-size: 1rem;
+}
+.nav__brand .mark {
+  width: 28px; height: 28px;
+  background: var(--cream); color: var(--red);
+  display: grid; place-items: center;
+  font-family: 'Anton', sans-serif;
+  font-size: 1.1rem;
+  border-radius: 4px;
+}
+.nav__links {
+  display: flex; gap: 26px;
+  font-family: 'Space Mono', monospace;
+  font-size: .82rem; letter-spacing: .15em; text-transform: uppercase;
+}
+.nav__links a { opacity: .75; transition: opacity .2s var(--ease); }
+.nav__links a:hover { opacity: 1; }
+@media (max-width: 700px) { .nav__links { display: none; } }
+
+.hero {
+  padding: 40px 24px 80px;
+  display: grid;
+  place-items: center;
+}
+
+.marquee {
+  width: 100%; max-width: 540px;
+  overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  margin-bottom: 22px;
+}
+.marquee__track {
+  display: inline-flex; gap: 28px;
+  white-space: nowrap;
+  animation: scrollX 22s linear infinite;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: .25em;
+  font-size: .95rem;
+  color: var(--cream); opacity: .8;
+}
+.marquee__track .sep { color: var(--ink); }
+@keyframes scrollX { to { transform: translateX(-50%); } }
+
+.cover {
+  width: min(540px, 92vw);
+  aspect-ratio: 1 / 1;
+  background: var(--cream);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 30px 60px -20px rgba(0,0,0,.5),
+    0 0 0 1px rgba(0,0,0,.08);
+  transform: translateZ(0);
+  transition: transform .8s var(--ease);
+}
+.cover:hover { transform: translateY(-4px) rotate(-.3deg); }
+
+.cover__img {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  mix-blend-mode: multiply;
+  z-index: 1;
+  pointer-events: none;
+  transition: transform 1.2s var(--ease);
+}
+.cover:hover .cover__img { transform: scale(1.03); }
+
+.cover__big {
+  position: absolute; inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  font-family: 'Anton', sans-serif;
+  color: var(--red);
+  line-height: .82;
+  font-size: clamp(11rem, 36vw, 22rem);
+  letter-spacing: -.04em;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+.cover__big span {
+  text-align: center;
+  align-self: center;
+}
+.cover__big span:nth-child(1) { transform: translateY(-6%); }
+.cover__big span:nth-child(2) { transform: translateY(-2%); }
+.cover__big span:nth-child(3) { transform: translateY(-6%); }
+
+.cover__credit {
+  position: absolute; left: 22px; right: 22px; bottom: 22px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  z-index: 4;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(1.4rem, 4.2vw, 2.2rem);
+  letter-spacing: -.01em;
+  line-height: 1;
+}
+.cover__name { color: var(--ink); }
+.cover__feat { color: var(--red-hot); text-align: right; }
+.cover__feat .small { font-size: .55em; opacity: .85; }
+
+.cover__meta {
+  position: absolute; top: 16px; left: 18px; right: 18px;
+  display: flex; justify-content: space-between;
+  font-family: 'Space Mono', monospace;
+  font-size: .7rem; letter-spacing: .14em;
+  color: var(--ink); opacity: .72;
+  z-index: 5;
+  text-shadow: 0 0 8px rgba(240,230,210,.7);
+}
+.cover__meta .blink {
+  display: inline-block;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--red);
+  margin-right: 5px; vertical-align: 1px;
+  animation: blink 1.6s ease-in-out infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .35; }
+}
+
+.hero__row {
+  width: min(540px, 92vw);
+  margin-top: 26px;
+  display: grid; gap: 4px;
+  text-align: center;
+}
+.hero__title-jp {
+  font-family: 'RocknRoll One', sans-serif;
+  font-size: clamp(1.4rem, 3.6vw, 1.9rem);
+  color: var(--cream);
+  line-height: 1.35;
+}
+.hero__role {
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--cream); opacity: .9;
+  letter-spacing: .02em;
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+}
+.hero__role a {
+  border-bottom: 1px solid rgba(240,230,210,.55);
+  transition: border-color .2s var(--ease), opacity .2s var(--ease);
+}
+.hero__role a:hover {
+  border-color: var(--cream);
+  opacity: 1;
+}
+.hero__meta-line {
+  margin-top: 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: .85rem; letter-spacing: .08em;
+  opacity: .75;
+}
+.hero__meta-line .dot { margin: 0 10px; }
+
+.hero__cta {
+  margin-top: 22px;
+  display: flex; gap: 12px;
+  justify-content: center; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: .95rem; letter-spacing: .02em;
+  transition: transform .25s var(--ease), background .25s var(--ease);
+  cursor: pointer;
+  border: none;
+}
+.btn--primary {
+  background: var(--cream); color: var(--ink);
+}
+.btn--primary:hover { transform: translateY(-2px); background: #fff; }
+.btn--ghost {
+  background: rgba(20,20,20,.25); color: var(--cream);
+  backdrop-filter: blur(8px);
+}
+.btn--ghost:hover { background: rgba(20,20,20,.45); transform: translateY(-2px); }
+.btn--disabled {
+  background: rgba(20,20,20,.18);
+  color: rgba(240,230,210,.72);
+  cursor: default;
+  pointer-events: none;
+}
+.btn .play-icon {
+  width: 0; height: 0;
+  border-left: 10px solid currentColor;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  margin-left: -2px;
+}
+
+section { padding: 80px 0; position: relative; }
+
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(240,230,210,.25);
+  padding-bottom: 16px;
+}
+.section-head h2 {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  letter-spacing: -.01em;
+  line-height: .9;
+  color: var(--cream);
+}
+.section-head h2 .num {
+  font-family: 'Space Mono', monospace;
+  font-size: .35em;
+  color: var(--cream); opacity: .55;
+  letter-spacing: .15em;
+  margin-right: 14px;
+  vertical-align: middle;
+}
+.section-head .jp {
+  font-family: 'RocknRoll One', sans-serif;
+  font-size: .95rem;
+  opacity: .75;
+  white-space: nowrap;
+}
+
+.about-card {
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: 18px;
+  padding: clamp(28px, 5vw, 56px);
+  position: relative;
+  box-shadow: 0 30px 60px -25px rgba(0,0,0,.5);
+}
+.about-card .stamp {
+  position: absolute;
+  top: -18px; right: 30px;
+  background: var(--red-hot);
+  color: var(--cream);
+  font-family: 'Anton', sans-serif;
+  padding: 8px 16px 6px;
+  letter-spacing: .12em;
+  font-size: 1rem;
+  transform: rotate(3deg);
+  border-radius: 4px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.about-card h3 {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.about-card h3 .red { color: var(--red); }
+.about-card .lead {
+  font-family: 'RocknRoll One', sans-serif;
+  font-size: 1.05rem;
+  margin-bottom: 18px;
+  color: var(--red);
+}
+.about-card p {
+  font-size: .98rem;
+  line-height: 1.9;
+  max-width: 68ch;
+  margin-bottom: 14px;
+  color: rgba(20,20,20,.85);
+}
+.about-card .tags {
+  margin-top: 24px;
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  letter-spacing: .08em;
+  padding: 6px 12px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  transition: all .25s var(--ease);
+}
+.tag:hover { background: var(--ink); color: var(--cream); }
+
+.tracklist {
+  margin-top: 8px;
+  display: grid;
+  gap: 26px;
+}
+.tracklist__section {
+  border: 1.5px solid rgba(240,230,210,.42);
+  border-radius: 8px;
+  padding: clamp(16px, 2.4vw, 24px);
+  background: rgba(15,15,15,.42);
+  box-shadow: 0 22px 45px -28px rgba(0,0,0,.7);
+}
+.tracklist__group {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  letter-spacing: .03em;
+  color: var(--cream);
+  margin-bottom: 8px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(240,230,210,.28);
+}
+.track {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 8px;
+  border-bottom: 1px solid rgba(240,230,210,.18);
+  transition: padding .3s var(--ease), background .3s var(--ease);
+  text-decoration: none;
+  color: inherit;
+}
+a.track { cursor: pointer; }
+.track:last-child { border-bottom: none; }
+.track:hover {
+  padding-left: 24px;
+  background: rgba(20,20,20,.32);
+}
+.track__num {
+  font-family: 'Space Mono', monospace;
+  font-size: .9rem;
+  letter-spacing: .1em;
+  color: var(--cream);
+  opacity: .55;
+}
+.track:hover .track__num { color: var(--red-hot); opacity: 1; }
+
+.track__title {
+  font-family: 'Zen Kaku Gothic New', 'Archivo Black', sans-serif;
+  font-size: clamp(1rem, 1.5vw, 1.16rem);
+  font-weight: 900;
+  color: var(--cream);
+  line-height: 1.45;
+  margin-bottom: 6px;
+}
+.track__title .star {
+  display: inline-block;
+  background: var(--red-hot); color: var(--cream);
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-left: 8px;
+  vertical-align: middle;
+  letter-spacing: .1em;
+}
+.track__authors {
+  font-family: 'Zen Kaku Gothic New', 'Space Mono', monospace;
+  font-size: .86rem;
+  font-weight: 500;
+  color: var(--cream);
+  opacity: .76;
+  line-height: 1.7;
+}
+.track__authors b { color: var(--cream); opacity: 1; font-weight: 700; }
+
+.track__venue {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.15rem;
+  letter-spacing: .04em;
+  color: var(--cream);
+  white-space: nowrap;
+  text-align: right;
+}
+.track__venue .year {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: .72rem;
+  opacity: .65;
+  letter-spacing: .15em;
+  margin-top: 2px;
+}
+
+@media (max-width: 720px) {
+  .tracklist__section { padding: 14px; }
+  .track { grid-template-columns: 36px 1fr; gap: 14px; }
+  .track__venue {
+    grid-column: 2;
+    text-align: left;
+    margin-top: 6px;
+    font-size: 1rem;
+  }
+}
+
+.credits-card {
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: 18px;
+  padding: clamp(24px, 4vw, 40px);
+  box-shadow: 0 30px 60px -25px rgba(0,0,0,.5);
+}
+.credit {
+  display: grid;
+  grid-template-columns: 170px 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px dashed rgba(20,20,20,.2);
+}
+.credit:last-child { border-bottom: none; }
+.credit__date {
+  font-family: 'Anton', sans-serif;
+  font-size: 1.4rem;
+  color: var(--red);
+  letter-spacing: .02em;
+}
+.credit__role {
+  font-family: 'Zen Kaku Gothic New', 'Archivo Black', sans-serif;
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--ink);
+  line-height: 1.45;
+  margin-bottom: 2px;
+}
+.credit__org {
+  font-family: 'Zen Kaku Gothic New', 'Space Mono', monospace;
+  font-size: .86rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+.credit__tag {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: .9rem;
+  letter-spacing: .18em;
+  background: var(--ink);
+  color: var(--cream);
+  padding: 4px 10px 2px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.credit__tag.is-award {
+  background: var(--red-hot);
+  color: var(--cream);
+}
+.credit__tag.is-award::before {
+  content: "★ ";
+  letter-spacing: 0;
+}
+@media (max-width: 720px) {
+  .credit { grid-template-columns: 1fr; gap: 4px; padding: 14px 0; }
+  .credit__tag { justify-self: start; }
+}
+
+.bars {
+  display: flex; flex-wrap: wrap;
+  gap: 10px;
+}
+.bar {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  padding: 12px 20px;
+  border: 2px solid var(--cream);
+  color: var(--cream);
+  border-radius: 999px;
+  transition: all .3s var(--ease);
+  letter-spacing: .01em;
+}
+.bar:hover {
+  background: var(--cream);
+  color: var(--red);
+  transform: translateY(-3px);
+}
+.bar.is-hot {
+  background: var(--cream);
+  color: var(--red);
+}
+.bar.is-hot:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+.booking {
+  text-align: center;
+  padding: 100px 0 80px;
+  position: relative;
+}
+.booking__pre {
+  font-family: 'Space Mono', monospace;
+  letter-spacing: .25em;
+  font-size: .85rem;
+  opacity: .7;
+  margin-bottom: 14px;
+}
+.booking__big {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(3rem, 12vw, 9rem);
+  line-height: .85;
+  letter-spacing: -.02em;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+.booking__big .red { color: var(--ink); }
+.booking__jp {
+  font-family: 'RocknRoll One', sans-serif;
+  font-size: 1.1rem;
+  opacity: .85;
+  margin: 14px 0 36px;
+}
+.book-links {
+  display: inline-flex; flex-wrap: wrap; justify-content: center;
+  gap: 12px;
+}
+
+footer {
+  border-top: 1px solid rgba(240,230,210,.18);
+  padding: 28px 24px;
+  font-family: 'Space Mono', monospace;
+  font-size: .78rem;
+  letter-spacing: .1em;
+  display: flex; justify-content: space-between; flex-wrap: wrap;
+  gap: 14px;
+  opacity: .7;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .9s var(--ease), transform .9s var(--ease);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__brand">
+    <div class="mark">H</div>
+    <span>HAYATO</span>
+  </div>
+  <div class="nav__links">
+    <a href="#about">About</a>
+    <a href="#works">Works</a>
+    <a href="#awards">Awards</a>
+    <a href="#career">Career</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="marquee">
+    <div class="marquee__track">
+      <span>NLP RESEARCH</span><span class="sep">●</span>
+      <span>NATURAL LANGUAGE PROCESSING</span><span class="sep">●</span>
+      <span>RHYMING</span><span class="sep">●</span>
+      <span>EMBEDDING MODELS</span><span class="sep">●</span>
+      <span>NLP RESEARCH</span><span class="sep">●</span>
+      <span>NATURAL LANGUAGE PROCESSING</span><span class="sep">●</span>
+      <span>RHYMING</span><span class="sep">●</span>
+      <span>EMBEDDING MODELS</span><span class="sep">●</span>
+    </div>
+  </div>
+
+  <div class="cover grain">
+    <div class="cover__meta">
+      <span>SIDE A · NLP</span>
+      <span><span class="blink"></span>2026</span>
+    </div>
+
+    <img class="cover__img" src="./cover.jpg" alt="" aria-hidden="true" />
+
+    <div class="cover__big" aria-hidden="true">
+      <span>N</span><span>L</span><span>P</span>
+    </div>
+
+    <div class="cover__credit">
+      <div class="cover__name">HAYATO OGAWA</div>
+      <div class="cover__feat">
+        <span class="small">feat.</span> Codex
+      </div>
+    </div>
+  </div>
+
+  <div class="hero__row">
+    <div class="hero__title-jp">自然言語処理</div>
+    <div class="hero__role">WASEDA UNIVERSITY / <a href="https://www.nlp-waseda.jp/home" target="_blank" rel="noopener">Kawahara Lab</a></div>
+    <div class="hero__meta-line">
+      Japanese Rap <span class="dot">·</span> Text Embedding
+    </div>
+  </div>
+
+  <div class="hero__cta">
+    <a href="#works" class="btn btn--primary"><span class="play-icon"></span>実績を見る</a>
+    <a href="#contact" class="btn btn--ghost">↓ コンタクト</a>
+  </div>
+</header>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2><span class="num">01</span>ABOUT</h2>
+      <span class="jp">— ライナーノーツ</span>
+    </div>
+
+    <div class="about-card grain reveal">
+      <div class="stamp">WASEDA NLP</div>
+      <h3>Rhyme, <span class="red">Embedding</span>,<br/>Natural Language Processing</h3>
+      <p class="lead">NLP Researcher</p>
+      <p>
+        早稲田大学大学院 基幹理工学研究科 情報理工・情報通信専攻に在籍し、
+        河原研究室にて自然言語処理を研究。
+      </p>
+      <p>
+        日本語ラップを普段から聴き、学部時代は早稲田大学ソウルミュージック研究会Galaxyに所属。
+        研究でも日本語ラップ、特に押韻・歌詞生成に取り組む。
+      </p>
+      <p>
+        また、SB IntuitionsではSarashina-embedding-v2-1bの開発に携わっており、テキスト埋め込みモデルに興味がある。
+      </p>
+      <div class="tags">
+        <span class="tag">#NLP</span>
+        <span class="tag">#LLM</span>
+        <span class="tag">#Japanese Rap</span>
+        <span class="tag">#Rhyme</span>
+        <span class="tag">#Text Embedding</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="works">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2><span class="num">02</span>WORKS</h2>
+      <span class="jp">— 研究・プロジェクト実績 / DISCOGRAPHY</span>
+    </div>
+
+    <div class="tracklist">
+
+      <div class="tracklist__section reveal">
+        <div class="tracklist__group reveal">International Conferences</div>
+
+      <div class="track reveal">
+        <div class="track__num">01</div>
+        <div>
+          <div class="track__title">
+            Constructing a Japanese Rap Lyric Generation Model with GRPO
+            <span class="star">NEW</span>
+          </div>
+          <div class="track__authors"><b>Hayato Ogawa</b>, Daisuke Kawahara. Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics.</div>
+        </div>
+        <div class="track__venue">ACL SRW<span class="year">2026.07</span></div>
+      </div>
+
+      <a class="track reveal" href="https://aclanthology.org/2025.acl-srw.69/" target="_blank" rel="noopener">
+        <div class="track__num">02</div>
+        <div>
+          <div class="track__title">Building Japanese Creativity Benchmarks and Applying them to Enhance LLM Creativity</div>
+          <div class="track__authors">So Fukuda, <b>Hayato Ogawa</b>, Kaito Horio, Daisuke Kawahara, Tomohide Shibata. ACL 2025 Student Research Workshop, pp. 939-957.</div>
+        </div>
+        <div class="track__venue">ACL SRW <span class="year">2025.07</span></div>
+      </a>
+
+      <a class="track reveal" href="https://aclanthology.org/2025.alp-1.14/" target="_blank" rel="noopener">
+        <div class="track__num">03</div>
+        <div>
+          <div class="track__title">Detecting Honkadori based on Waka Embeddings</div>
+          <div class="track__authors"><b>Hayato Ogawa</b>, Kaito Horio, Daisuke Kawahara. Proceedings of the Second Workshop on Ancient Language Processing, pp. 112-119.</div>
+        </div>
+        <div class="track__venue">ALP <span class="year">2025.05</span></div>
+      </a>
+      </div>
+
+      <div class="tracklist__section reveal">
+        <div class="tracklist__group reveal">Domestic Conferences</div>
+
+      <div class="track reveal">
+        <div class="track__num">04</div>
+        <div>
+          <div class="track__title">GRPOを用いた日本語ラップの歌詞生成モデルの構築</div>
+          <div class="track__authors"><b>小川隼斗</b>, 河原大輔. 言語処理学会 第32回年次大会.</div>
+        </div>
+        <div class="track__venue">NLP <span class="year">2026.03</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">05</div>
+        <div>
+          <div class="track__title">指示認識テキスト埋め込みモデルの指示によるベクトル変位の分析</div>
+          <div class="track__authors"><b>小川隼斗</b>, 福地成彦, 李聖哲, 河原大輔. 言語処理学会 第32回年次大会.</div>
+        </div>
+        <div class="track__venue">NLP <span class="year">2026.03</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">06</div>
+        <div>
+          <div class="track__title">非母語話者の日本語に対する言語モデルの差別的傾向</div>
+          <div class="track__authors">折田奈甫, <b>小川隼斗</b>, 河原大輔. 第50回社会言語科学会研究大会.</div>
+        </div>
+        <div class="track__venue">JASS <span class="year">2026.03</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">07</div>
+        <div>
+          <div class="track__title">韻と内容を制御した日本語ラップ歌詞の自動生成</div>
+          <div class="track__authors">織田宥楽, <b>小川隼斗</b>, 河原大輔. 情報処理学会 第267回自然言語処理研究発表会.</div>
+        </div>
+        <div class="track__venue">IPSJ-NL <span class="year">2026.03</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">08</div>
+        <div>
+          <div class="track__title">コード生成タスクにおける仮説文書の埋め込みを用いたRAGの検証</div>
+          <div class="track__authors">千代丸怜央, <b>小川隼斗</b>, 吉江修. 人工知能学会全国大会 第39回.</div>
+        </div>
+        <div class="track__venue">JSAI <span class="year">2025.05</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">09</div>
+        <div>
+          <div class="track__title">教師なし学習によるラップの形式の学習</div>
+          <div class="track__authors">織田宥楽, <b>小川隼斗</b>, 河原大輔. 人工知能学会全国大会 第39回.</div>
+        </div>
+        <div class="track__venue">JSAI <span class="year">2025.05</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">10</div>
+        <div>
+          <div class="track__title">和歌の埋め込みに基づく本歌取りの推定</div>
+          <div class="track__authors"><b>小川隼斗</b>, 堀尾海斗, 河原大輔. 言語処理学会 第31回年次大会.</div>
+        </div>
+        <div class="track__venue">NLP <span class="year">2025.03</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">11</div>
+        <div>
+          <div class="track__title">LLM의 学術ドメイン適応のための合成データに基づく統合フレームワーク</div>
+          <div class="track__authors"><b>小川隼斗</b>, 河原大輔, 相澤彰子. 言語処理学会 第31回年次大会.</div>
+        </div>
+        <div class="track__venue">NLP <span class="year">2025.03</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">12</div>
+        <div>
+          <div class="track__title">日本語の包括的な指示追従性データセットの構築</div>
+          <div class="track__authors">堀尾海斗, 福田創, <b>小川隼斗</b>, 鈴江万碧, 織田宥楽, 河原大輔, 関根聡, 安藤まや. 言語処理学会 第31回年次大会.</div>
+        </div>
+        <div class="track__venue">NLP <span class="year">2025.03</span></div>
+      </div>
+
+      <div class="track reveal">
+        <div class="track__num">13</div>
+        <div>
+          <div class="track__title">日本語創造性ベンチマークの構築</div>
+          <div class="track__authors">福田創, <b>小川隼斗</b>, 堀尾海斗, 河原大輔, 柴田知秀. 言語処理学会 第31回年次大会.</div>
+        </div>
+        <div class="track__venue">NLP <span class="year">2025.03</span></div>
+      </div>
+      </div>
+
+      <div class="tracklist__section reveal">
+        <div class="tracklist__group reveal">Other</div>
+
+      <div class="track reveal">
+        <div class="track__num">14</div>
+        <div>
+          <div class="track__title">GRPOを用いた日本語ラップの歌詞生成モデルの構築</div>
+          <div class="track__authors"><b>小川隼斗</b>, 河原大輔. NLP若手の会(YANS) 第20回シンポジウム. 奨励賞受賞.</div>
+        </div>
+        <div class="track__venue">YANS <span class="year">2025.09</span></div>
+      </div>
+
+      <a class="track reveal" href="https://www.sbintuitions.co.jp/blog/entry/2025/08/20/160139" target="_blank" rel="noopener">
+        <div class="track__num">15</div>
+        <div>
+          <div class="track__title">Sarashina-Embedding-v2-1B: 日本語に特化した指示を付与できるテキスト埋め込みモデル</div>
+          <div class="track__authors"><b>テックブログ</b> · SB Intuitions Blog</div>
+        </div>
+        <div class="track__venue">BLOG <span class="year">2025.08</span></div>
+      </a>
+
+      <div class="track reveal">
+        <div class="track__num">16</div>
+        <div>
+          <div class="track__title">和歌埋め込みモデルの構築とそれを用いた本歌取りの分析</div>
+          <div class="track__authors"><b>小川隼斗</b>, 河原大輔. NLP若手の会(YANS) 第19回シンポジウム.</div>
+        </div>
+        <div class="track__venue">YANS <span class="year">2024.09</span></div>
+      </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="awards">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2><span class="num">03</span>AWARDS</h2>
+      <span class="jp">— 表彰・受賞歴</span>
+    </div>
+
+    <div class="credits-card grain reveal">
+      <div class="credit">
+        <div class="credit__date">2025.09</div>
+        <div>
+          <div class="credit__role">NLP若手の会(YANS) 第20回シンポジウム 奨励賞</div>
+          <div class="credit__org">GRPOを用いた日本語ラップの歌詞生成モデルの構築</div>
+        </div>
+        <div class="credit__tag is-award">AWARD</div>
+      </div>
+
+      <div class="credit">
+        <div class="credit__date">2025.03</div>
+        <div>
+          <div class="credit__role">早稲田大学 情報理工学科賞</div>
+          <div class="credit__org">Department Award</div>
+        </div>
+        <div class="credit__tag is-award">AWARD</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="career">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2><span class="num">04</span>CAREER</h2>
+      <span class="jp">— 経歴 / CREDITS</span>
+    </div>
+
+    <div class="credits-card grain reveal">
+      <div class="credit">
+        <div class="credit__date">2025.04 — Present</div>
+        <div>
+          <div class="credit__role">早稲田大学大学院 基幹理工学研究科</div>
+          <div class="credit__org">情報理工・情報通信専攻 入学 / 在学中</div>
+        </div>
+        <div class="credit__tag">CURRENT</div>
+      </div>
+
+      <div class="credit">
+        <div class="credit__date">2024.12 — Present </div>
+        <div>
+          <div class="credit__role">SB Intuitions</div>
+          <div class="credit__org">インターン / Sarashina-embedding-v2-1bの開発</div>
+        </div>
+        <div class="credit__tag">INTERN</div>
+      </div>
+
+      <div class="credit">
+        <div class="credit__date">2024.02 — 2025.03</div>
+        <div>
+          <div class="credit__role">国立情報学研究所 LLM-jp</div>
+          <div class="credit__org">リサーチアシスタント / 学術ドメインLLM向け合成データ構築</div>
+        </div>
+        <div class="credit__tag">RA</div>
+      </div>
+
+      <div class="credit">
+        <div class="credit__date">2025.03</div>
+        <div>
+          <div class="credit__role">早稲田大学 基幹理工学部 情報理工学科 卒業</div>
+          <div class="credit__org">GPA: 2.74</div>
+        </div>
+        <div class="credit__tag">B.S.</div>
+      </div>
+
+      <div class="credit">
+        <div class="credit__date">2021.04</div>
+        <div>
+          <div class="credit__role">早稲田大学 基幹理工学部 情報理工学科 入学</div>
+          <div class="credit__org">Bachelor's Program</div>
+        </div>
+        <div class="credit__tag">EDU</div>
+      </div>
+
+      <div class="credit">
+        <div class="credit__date">2020.03</div>
+        <div>
+          <div class="credit__role">福岡大学附属大濠高校 卒業</div>
+          <div class="credit__org">High School</div>
+        </div>
+        <div class="credit__tag">EDU</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="bars">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2><span class="num">05</span>BARS</h2>
+      <span class="jp">— 得意分野 / SKILLS</span>
+    </div>
+
+    <div class="bars reveal">
+      <span class="bar">NLP</span>
+      <span class="bar">LLM</span>
+      <span class="bar is-hot">Japanese RAP</span>
+      <span class="bar">Rhyme</span>
+      <span class="bar is-hot">Text Embedding Models</span>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="booking">
+  <div class="wrap reveal">
+    <div class="booking__pre">— BOOKINGS / 連絡先 —</div>
+    <div class="booking__big">DROP A <span class="red">LINE</span></div>
+
+    <div class="book-links">
+      <a href="mailto:cookie3120@ruri.waseda.jp" class="btn btn--primary">✉ cookie3120@ruri.waseda.jp</a>
+      <a href="https://www.linkedin.com/in/sraymnlp/" target="_blank" rel="noopener" class="btn btn--ghost">LinkedIn</a>
+      <a href="https://x.com/slime_sraym?s=21&t=_Fnt7k-uR1k0smJ5KOs-NQ" target="_blank" rel="noopener" class="btn btn--ghost">Twitter(X)</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 HAYATO — ALL TRACKS RESEARCHED &amp; WRITTEN</span>
+  <span>BUILT WITH ❤ &amp; ☕</span>
+</footer>
+
+<script>
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('is-in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
