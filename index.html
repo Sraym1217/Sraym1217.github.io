@@ -364,87 +364,84 @@ section { padding: 80px 0; position: relative; }
   gap: 26px;
 }
 .tracklist__section {
-  border: 1.5px solid rgba(240,230,210,.42);
-  border-radius: 8px;
-  padding: clamp(16px, 2.4vw, 24px);
-  background: rgba(15,15,15,.42);
-  box-shadow: 0 22px 45px -28px rgba(0,0,0,.7);
-}
-.tracklist__group {
-  font-family: 'Anton', sans-serif;
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  letter-spacing: .03em;
-  color: var(--cream);
-  margin-bottom: 8px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid rgba(240,230,210,.28);
-}
-.track {
-  display: grid;
-  grid-template-columns: 56px 1fr auto;
-  gap: 20px;
-  align-items: center;
-  padding: 20px 8px;
-  border-bottom: 1px solid rgba(240,230,210,.18);
-  transition: padding .3s var(--ease), background .3s var(--ease);
-  text-decoration: none;
-  color: inherit;
-}
-a.track { cursor: pointer; }
-.track:last-child { border-bottom: none; }
-.track:hover {
-  padding-left: 24px;
-  background: rgba(20,20,20,.32);
-}
-.track__num {
-  font-family: 'Space Mono', monospace;
-  font-size: .9rem;
-  letter-spacing: .1em;
-  color: var(--cream);
-  opacity: .55;
-}
-.track:hover .track__num { color: var(--red-hot); opacity: 1; }
+    border: 1.5px solid rgba(20,20,20,.12);
+    border-radius: 18px;
+    padding: clamp(16px, 2.4vw, 24px);
+    background: var(--cream);
+    color: var(--ink);
+    box-shadow: 0 30px 60px -25px rgba(0,0,0,.15);
+  }
+  .tracklist__group {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    letter-spacing: .03em;
+    color: var(--red);
+    margin-bottom: 8px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(138,31,26,.28);
+  }
+  .track {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding: 20px 8px;
+    border-bottom: 1px solid rgba(20,20,20,.08);
+    transition: padding .3s var(--ease), background .3s var(--ease);
+    text-decoration: none;
+    color: inherit;
+    background: rgba(20,20,20,.04);
+    border-radius: 12px;
+  }
+  a.track { cursor: pointer; }
+  .track:last-child { border-bottom: none; }
+  .track:hover {
+    padding-left: 24px;
+    background: rgba(20,20,20,.09);
+  }
+  .track__num {
+    font-family: 'Space Mono', monospace;
+    font-size: .9rem;
+    letter-spacing: .1em;
+    color: var(--ink);
+    opacity: .65;
+  }
+  .track:hover .track__num { color: var(--red-hot); opacity: 1; }
 
-.track__title {
-  font-family: 'Zen Kaku Gothic New', 'Archivo Black', sans-serif;
-  font-size: clamp(1rem, 1.5vw, 1.16rem);
-  font-weight: 900;
-  color: var(--cream);
-  line-height: 1.45;
-  margin-bottom: 6px;
-}
-.track__title .star {
-  display: inline-block;
-  background: var(--red-hot); color: var(--cream);
-  font-family: 'Space Mono', monospace;
-  font-size: .65rem;
-  padding: 2px 6px;
-  border-radius: 3px;
-  margin-left: 8px;
-  vertical-align: middle;
-  letter-spacing: .1em;
-}
-.track__authors {
-  font-family: 'Zen Kaku Gothic New', 'Space Mono', monospace;
-  font-size: .86rem;
-  font-weight: 500;
-  color: var(--cream);
-  opacity: .76;
-  line-height: 1.7;
-}
-.track__authors b { color: var(--cream); opacity: 1; font-weight: 700; }
+  .track__title {
+    font-family: 'Zen Kaku Gothic New', 'Archivo Black', sans-serif;
+    font-size: clamp(1rem, 1.5vw, 1.16rem);
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1.45;
+    margin-bottom: 6px;
+  }
+  .track__title .star {
+    display: inline-block;
+    background: var(--red-hot);
+    color: var(--cream);
+    font-family: 'Space Mono', monospace;
+    font-size: .65rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: .1em;
+  }
+  .track__authors {
+    font-family: 'Zen Kaku Gothic New', 'Space Mono', monospace;
+    font-size: .86rem;
+    font-weight: 500;
+    color: rgba(20,20,20,.8);
+    line-height: 1.7;
+  }
+  .track__authors b { color: var(--ink); font-weight: 700; opacity: 1; }
 
-.track__venue {
-  font-family: 'Anton', sans-serif;
-  font-size: 1.15rem;
-  letter-spacing: .04em;
-  color: var(--cream);
-  white-space: nowrap;
-  text-align: right;
-}
-.track__venue .year {
-  display: block;
-  font-family: 'Space Mono', monospace;
+  .track__venue {
+    font-family: 'Anton', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: .04em;
+    color: var(--red-deep);
   font-size: .72rem;
   opacity: .65;
   letter-spacing: .15em;
